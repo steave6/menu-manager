@@ -87,6 +87,7 @@ var mainMenu = {
     topposite: null,
 
     init: function () {
+        this.getMenuList();
         this.setBasicDiv();
         this.setTable();
     },
@@ -114,6 +115,15 @@ var mainMenu = {
         }
     },
 
+    getMenuList: function() {
+        handsonMenu.getMenuList(function(response, dataType) {
+            var menu = [];
+            for(item in response){
+                menu.push(response[item].name)
+            }
+            handsonMenu.menu = menu;
+        });
+    }
 }
 
 var handsonMenu = {
@@ -122,7 +132,7 @@ var handsonMenu = {
     startCol: 0,
     endCol: 0,
     instance: null,
-    menu: ["cake", "maphine"],
+    menu: null,
     createTable: function (container, data) {
         var ht = new Handsontable(container, {
             data: data,
@@ -171,8 +181,6 @@ var handsonMenu = {
     },
     getMenuListBridge: function(id) {
         handsonMenu.getMenuList(function(response, dataType) {
-            var menuL = response
-            console.log(id)
             $.each(response, function(i, obj) {
                 $option = $('<option>')
                     .val(obj.code)
