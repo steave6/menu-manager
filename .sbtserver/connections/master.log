@@ -1,0 +1,7 @@
+New log file opened at Sat Feb 11 12:55:20 JST 2017 by 3136@devlp
+Taking next connection to: 38673
+New client attempting to connect on port: 49842-38673
+  Address = /127.0.1.1:38673
+This client on port 49842 has uuid ec465d29-eab6-4ff8-844f-bae5334f293e configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-ec465d29-eab6-4ff8-844f-bae5334f293e
+Taking next connection to: 38673

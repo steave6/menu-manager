@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+#main {
+    height: 80%;
+    width: 100%;
+    position: relative;
+}
+
+.composite-gallery > .composite-gallery {
+    display: inline-block;
+}
+
+#myGrid {
+    width: 80%;
+    height: 80%;
+    display: inline-block;
+}
+
+#menuList {
+    width: 20%;
+    height: 100%;
+    float: right;
+    background-color: red;
+    display: inline-block;
+    position: absolute;
+}
+
+.currentRow {
+  background-color: #E7E8EF;
+}
+
+.currentCol {
+  background-color: #E7E8EF;
+}
