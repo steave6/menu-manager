@@ -116,12 +116,12 @@ var mainMenu = {
     },
 
     getMenuList: function() {
-        handsonMenu.getMenuList(function(response, dataType) {
+        handsonMenu.getMenuListSync(function(response, dataType) {
             var menu = [];
             for(item in response){
                 menu.push(response[item].name)
             }
-            handsonMenu.menu = menu;
+            handsonMenu.menu = response;
         });
     }
 }
@@ -147,16 +147,22 @@ var handsonMenu = {
                 },
                 {
                     data: "name",
-                    type: "dropdown",
-                    source: handsonMenu.menu,
-                    strict: false,
-                    visibleRows: 5,
-                    allowInvalid: false,
+                    type: 'handsontable',
+                    handsontable: {
+                        colHeaders: false,
+                        autoColumnSize: true,
+                        allowInvalid: false,
+                        data: handsonMenu.menu
+                    },
+//                    source: handsonMenu.name,
+//                    strict: false,
+//                    visibleRows: 5,
                     width: "100px"
                 }
             ],
             minRows: 7,
             maxRows: 7,
+            contextMenu: true,
             afterSelectionEnd: handsonMenu.Event.afterSelectionEnd
         });
         return ht;
@@ -192,6 +198,13 @@ var handsonMenu = {
     getMenuList: function(callback) {
         $.ajax({
             url: '/api/get/menulist',
+            success: callback
+        });
+    },
+    getMenuListSync: function(callback) {
+        $.ajax({
+            url: '/api/get/menulist',
+            async: false,
             success: callback
         });
     },
