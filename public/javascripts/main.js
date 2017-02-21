@@ -1,3 +1,5 @@
+(function() {
+'use strict';
 var GalleryComposite = function (heading, id) {
     this.children = [];
     this.element = $('<div class="composite-gallery"></div>').attr('id', id)
@@ -56,69 +58,94 @@ GalleryComposite.prototype = {
     }
 }
 
-var GalleryTable = function (id) {
+class GalleryTable {
+  constructor (heading, id) {
     this.child = null;
-    this.element = $('<div class="gallery-table"></div>')
-        .attr('id', id);
-}
-GalleryTable.prototype = {
-    // Due to this being a leaf, it doesn't use these methods,
-    // but must implement them to count as implementing the
-    // Composite interface
-    add: function (data) {
-        var container = document.getElementById(this.element.attr('id'));
-        this.child = new handsonMenu.createTable(container, data);
-    },
-    remove: function () { },
-    getChild: function () { return this.child },
-    hide: function () {
-        this.element.hide(0);
-    },
-    show: function () {
-        this.element.show(0);
-    },
-    getElement: function () {
-        return this.element;
-    }
+    this.element = $('<div class="gallery-table"></div>').attr('id', id)
+                    .append('<p>' + heading + '</p>');
+  }
+  add (data) {
+      var container = document.getElementById(this.element.attr('id'));
+      this.child = new handsonMenu.createTable(container, data);
+  }
+  remove () { }
+  getChild () { return this.child }
+  hide () {
+      this.element.hide(0);
+  }
+  show () {
+      this.element.show(0);
+  }
+  getElement () {
+      return this.element;
+  }
+
 }
 
+//var GalleryTable = function (id) {
+//    this.child = null;
+//    this.element = $('<div class="gallery-table"></div>')
+//        .attr('id', id);
+//}
+//GalleryTable.prototype = {
+//    // Due to this being a leaf, it doesn't use these methods,
+//    // but must implement them to count as implementing the
+//    // Composite interface
+//    add: function (data) {
+//        var container = document.getElementById(this.element.attr('id'));
+//        this.child = new handsonMenu.createTable(container, data);
+//    },
+//    remove: function () { },
+//    getChild: function () { return this.child },
+//    hide: function () {
+//        this.element.hide(0);
+//    },
+//    show: function () {
+//        this.element.show(0);
+//    },
+//    getElement: function () {
+//        return this.element;
+//    }
+//}
+
+var fieldV = {
+  topComp: null,
+  hotMap: new Map(),
+  recipeMap: new Map()
+}
 
 var mainMenu = {
-    topposite: null,
 
     init: function () {
         this.getMenuList();
         this.setBasicDiv();
         this.setTable();
     },
-
     setBasicDiv: function() {
         var today = new Date();
-        this.topposite = new GalleryComposite('', 'toplevel-composite');
-        for(i=0; i < 7; i++) {
+        fieldV.topComp = new GalleryComposite('', 'toplevel-composite');
+        for (var i=0; i < 7; i++) {
             var cdate = new Date();
             cdate.setDate(today.getDate() + Number(i));
             var cdatestr = cdate.getFullYear() + "-" + cdate.getMonth() + "-" + cdate.getDate();
 
             var secondlevel = new GalleryComposite(cdatestr, cdatestr);
-            this.topposite.add(secondlevel);
+            fieldV.topComp.add(secondlevel);
         }
-        this.topposite.getElement().appendTo('#myGrid');
+        fieldV.topComp.getElement().appendTo('#myGrid');
     },
-
     setTable: function() {
-        var comps = this.topposite.getChildren();
-        for (i = 0; i < comps.length; i++) {
+        var comps = fieldV.topComp.getChildren();
+        for (var i = 0; i < comps.length; i++) {
             var comp = comps[i];
 
             handsonMenu.getMenuBridge(comp);
         }
     },
-
     getMenuList: function() {
         handsonMenu.getMenuListSync(function(response, dataType) {
             var menu = [];
-            for(item in response){
+            for(var item in response){
                 menu.push(response[item].name)
             }
             handsonMenu.menu = response;
@@ -127,99 +154,106 @@ var mainMenu = {
 }
 
 var handsonMenu = {
-    startRow: 0,
-    endRow: 0,
-    startCol: 0,
-    endCol: 0,
-    instance: null,
-    menu: null,
-    createTable: function (container, data) {
-        var ht = new Handsontable(container, {
-            data: data,
-            currentRowClassName: 'currentRow',
-            currentColClassName: 'currentCol',
-            colHeaders: ["code", "メニュー"],
-            rowHeaders: false,
-            columns: [{
-                    data: "code",
-                    width: "50px",
-                    readOnly: true
-                },
-                {
-                    data: "name",
-                    type: 'handsontable',
-                    handsontable: {
-                        colHeaders: false,
-                        autoColumnSize: true,
-                        allowInvalid: false,
-                        data: handsonMenu.menu
-                    },
-//                    source: handsonMenu.name,
-//                    strict: false,
-//                    visibleRows: 5,
-                    width: "100px"
-                }
-            ],
-            minRows: 7,
-            maxRows: 7,
-            contextMenu: true,
-            afterSelectionEnd: handsonMenu.Event.afterSelectionEnd
-        });
-        return ht;
-    },
-    getMenuBridge: function (composite) {
-        handsonMenu.getMenuData('someidstring', function (response, dataType) {
-            var item = ["one", "two", "three"]
-            for(i = 0; i < 3; i++) {
-                var idstr = composite.getElement().attr('id') + "-" + (i+1)
-                var gtable = new GalleryTable(idstr)
-                composite.add(gtable)
+  startRow: 0,
+  endRow: 0,
+  startCol: 0,
+  endCol: 0,
+  instance: null,
+  menu: null,
+  createTable: function (container, data) {
+      var ht = new Handsontable(container, {
+          data: data,
+          currentRowClassName: 'currentRow',
+          currentColClassName: 'currentCol',
+          colHeaders: ["code", "メニュー"],
+          rowHeaders: false,
+          columns: [{
+                  data: 'code',
+                  width: '200px',
+                  renderer: handsonMenu.Event.codeMenuRenderer
+              }
+          ],
+          minRows: 7,
+          maxRows: 7,
+          contextMenu: true,
+          afterSelectionEnd: handsonMenu.Event.afterSelectionEnd
+      });
+      fieldV.hotMap.set(container.id, ht);
+      return ht;
+  },
+  getMenuBridge: function (composite) {
+      handsonMenu.getMenuData('someidstring', function (response, dataType) {
+          var item = ["one", "two", "three"]
+          for (var i = 0; i < 3; i++) {
+              var idstr = composite.getElement().attr('id') + "-" + (i+1)
+              var gtable = new GalleryTable('', idstr)
+              composite.add(gtable)
 
-                gtable.add(response[item[i]])
-            }
-        });
+              gtable.add(response[item[i]])
+          }
+      });
+  },
+  getMenuData: function(id, callback) {
+      $.ajax({
+          url:'/api/get/mealtype', // + id,
+          success: callback
+      });
+  },
+  getMenuListBridge: function(id) {
+      handsonMenu.getMenuList(function(response, dataType) {
+          $.each(response, function(i, obj) {
+              var $option = $('<option>')
+                  .val(obj.code)
+                  .text(obj.name);
+              $(id).append($option);
+              fieldV.recipeMap.set(String(obj.code), obj.name);
+          });
+      });
+  },
+  getMenuList: function(callback) {
+      $.ajax({
+          url: '/api/get/menulist',
+          success: callback
+      });
+  },
+  getMenuListSync: function (callback) {
+      $.ajax({
+          url: '/api/get/menulist',
+          async: false,
+          success: callback
+      });
+  },
+  Event: {
+    afterSelectionEnd: function (r, c, r2, c2) {
+      handsonMenu.startRow = r;
+      handsonMenu.endRow = r2;
+      handsonMenu.startCol = c;
+      handsonMenu.endCol = c2;
+      handsonMenu.instance = this;
     },
-    getMenuData: function(id, callback) {
-        $.ajax({
-            url:'/api/get/mealtype', // + id,
-            success: callback
-        });
-    },
-    getMenuListBridge: function(id) {
-        handsonMenu.getMenuList(function(response, dataType) {
-            $.each(response, function(i, obj) {
-                $option = $('<option>')
-                    .val(obj.code)
-                    .text(obj.name)
-                $(id).append($option)
-            });
-        });
-    },
-    getMenuList: function(callback) {
-        $.ajax({
-            url: '/api/get/menulist',
-            success: callback
-        });
-    },
-    getMenuListSync: function(callback) {
-        $.ajax({
-            url: '/api/get/menulist',
-            async: false,
-            success: callback
-        });
-    },
-    Event: {
-        afterSelectionEnd: function(r, c, r2, c2) {
-            handsonMenu.startRow = r;
-            handsonMenu.endRow = r2;
-            handsonMenu.startCol = c;
-            handsonMenu.endCol = c2;
-            handsonMenu.instance = this;
-        }
-    },
-    getInstance: function () {
-        return handsonMenu.instance;
+    codeMenuRenderer: function (hotInstance, TD, row, col, prop, value, cellProperties) {
+      var rmap = fieldV.recipeMap;
+      var key = value + '';
+      if (rmap.get(key) !== undefined) {
+        TD.style.color = 'blue';
+        TD.innerHTML = rmap.get(key);
+      } else if (value === '' || value === null) {
+        TD.innerHTML = '';
+      } else {
+        TD.style.backgroundColor = 'red';
+        TD.innerHTML = value;
+      }
     }
+  },
+  getInstance: function () {
+      return handsonMenu.instance;
+  },
+  allRerender: function () {
+    var hmap = fieldV.hotMap;
+    hmap.forEach(function (value, key, map) {
+      value.render();
+    });
+  }
 }
 
 var menuLists = {
@@ -243,4 +277,8 @@ var menuLists = {
 $( document ).ready(function () {
     mainMenu.init();
     menuLists.init();
+
+    setTimeout(handsonMenu.allRerender, 1000);
 });
+
+})();
