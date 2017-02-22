@@ -8,9 +8,9 @@ import play.api.libs.functional.syntax._
 class SenderData extends Controller {
 
   def targetMeal() = Action {
-    val cooking = Map("code" -> Json.toJson(1), "name" -> Json.toJson("egg"))
-    val cooking2 = Map("code" -> Json.toJson(2), "name" -> Json.toJson("mafine"))
-    val cooking3 = Map("code" -> Json.toJson(3), "name" -> Json.toJson("cake"))
+    val cooking = Map("code" -> Json.toJson(1))
+    val cooking2 = Map("code" -> Json.toJson(2))
+    val cooking3 = Map("code" -> Json.toJson(3))
     val days = Map(
       "one" -> Seq(cooking, cooking2, cooking3),
       "two" -> Seq(cooking2),
