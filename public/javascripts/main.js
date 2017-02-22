@@ -59,10 +59,9 @@ GalleryComposite.prototype = {
 }
 
 class GalleryTable {
-  constructor (heading, id) {
+  constructor (id) {
     this.child = null;
     this.element = $('<div class="gallery-table"></div>').attr('id', id)
-                    .append('<p>' + heading + '</p>');
   }
   add (data) {
       var container = document.getElementById(this.element.attr('id'));
@@ -143,7 +142,7 @@ var mainMenu = {
         }
     },
     getMenuList: function() {
-        handsonMenu.getMenuListSync(function(response, dataType) {
+        handsonMenu.getMenuList(function(response, dataType) {
             var menu = [];
             for(var item in response){
                 menu.push(response[item].name)
@@ -186,7 +185,7 @@ var handsonMenu = {
           var item = ["one", "two", "three"]
           for (var i = 0; i < 3; i++) {
               var idstr = composite.getElement().attr('id') + "-" + (i+1)
-              var gtable = new GalleryTable('', idstr)
+              var gtable = new GalleryTable(idstr);
               composite.add(gtable)
 
               gtable.add(response[item[i]])
@@ -234,14 +233,16 @@ var handsonMenu = {
     codeMenuRenderer: function (hotInstance, TD, row, col, prop, value, cellProperties) {
       var rmap = fieldV.recipeMap;
       var key = value + '';
+
+//      TD.style.textAlign = 'inherit'; //doesn't work
       if (rmap.get(key) !== undefined) {
         TD.style.color = 'blue';
-        TD.innerHTML = rmap.get(key);
+        TD.innerText = rmap.get(key);
       } else if (value === '' || value === null) {
-        TD.innerHTML = '';
+        TD.innerText = '';
       } else {
         TD.style.backgroundColor = 'red';
-        TD.innerHTML = value;
+        TD.innerText = value;
       }
     }
   },
