@@ -117,7 +117,7 @@ var mainMenu = {
         }
     },
     getMenuList: function() {
-        hotMenu.getMenuList(function(response, dataType) {
+        Ajax.getRecipeList(function(response, dataType) {
             var menu = [];
             for(var item in response){
                 menu.push(response[item].name)
@@ -159,7 +159,7 @@ var hotMenu = {
     return ht;
   },
   getMenuBridge: function (composite) {
-      hotMenu.getMenuData('someidstring', function (response, dataType) {
+      Ajax.getMenuData('someidstring', function (response, dataType) {
           var item = ["one", "two", "three"]
           for (var i = 0; i < 3; i++) {
               var idstr = composite.getElement().attr('id') + "-" + (i+1)
@@ -168,18 +168,6 @@ var hotMenu = {
 
               gtable.add(response[item[i]])
           }
-      });
-  },
-  getMenuData: function(id, callback) {
-      $.ajax({
-          url:'/api/get/mealtype', // + id,
-          success: callback
-      });
-  },
-  getMenuList: function(callback) {
-      $.ajax({
-          url: '/api/get/menulist',
-          success: callback
       });
   },
   Event: {
@@ -193,10 +181,11 @@ var hotMenu = {
     codeMenuRenderer: function (hotInstance, TD, row, col, prop, value, cellProperties) {
       var rmap = Field.recipeMap;
       var key = value + '';
+      var rname = rmap.get(key);
 
-      if (rmap.get(key) !== undefined) {
-        TD.style.color = 'blue';
-        TD.innerText = rmap.get(key);
+      if (rname !== undefined) {
+        TD.style.color = 'R' !== key.substr(0,1) ? 'blue' : 'green';
+        TD.innerText = rname;
       } else if (value === '' || value === null) {
         TD.innerText = '';
       } else {
@@ -218,20 +207,22 @@ var hotMenu = {
 
 var Ajax = {
   getMenuData: function(id, callback) {
-      $.ajax({
-          url:'/api/get/mealtype', // + id,
-          success: callback
-      });
+    $.ajax({
+      url:'/api/get/mealtype', // + id,
+      success: callback
+    });
   },
   getRecipeList: function(callback) {
-      $.ajax({
-          url: '/api/get/menulist',
-          success: callback
-      });
+    $.ajax({
+      url: '/api/get/menulist',
+      success: callback
+    });
   }
 }
 
 var hotRecipe = {
+  instance: null,
+
   init: function() {
     hotRecipe.getMenuListBridge('recipeGrid')
 
@@ -252,7 +243,7 @@ var hotRecipe = {
       hotRecipe.createTable(id, response);
 
       for (var item in response) {
-        Field.recipeMap.set(item, response[item].name);
+        Field.recipeMap.set(response[item].code + '', response[item].name);
       }
     });
   },
@@ -260,14 +251,13 @@ var hotRecipe = {
     var container = document.getElementById(id);
     var hot = new Handsontable(container, {
       data: data,
-      currentRowClassName: 'currentRow',
-      currentColClassName: 'currentCol',
       colHeaders: ["code", "メニュー"],
       rowHeaders: true,
       columns: [{
           data: 'code',
           width: '100px',
           readOnly: true
+//          onCellDblClick: hotRecipe.Event.onCellDblClick
         },
         {
           data: 'name',
@@ -278,8 +268,17 @@ var hotRecipe = {
       minRows: 7,
       contextMenu: true
     });
+    hot.view.wt.update('onCellDblClick', hotRecipe.Event.onCellDblClick);
+
+    hotRecipe.instance = hot;
   },
   Event: {
+    onCellDblClick: function (mouseEv, rowcol, targetEl, myself) {
+      var sdata = hotRecipe.instance.getDataAtCell(rowcol.row, rowcol.col);
+      console.log(sdata)
+      var hmenu = hotMenu.sTable;
+      hmenu.instance.setDataAtCell(hmenu.startRow, hmenu.startCol, sdata);
+    }
   }
 }
 

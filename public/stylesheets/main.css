@@ -9,6 +9,10 @@ html, body {
     position: relative;
 }
 
+.horizon-container {
+}
+
+
 .composite-gallery > .composite-gallery {
     display: inline-block;
 }
@@ -16,7 +20,7 @@ html, body {
 #myGrid {
     width: 80%;
     height: 80%;
-    display: inline-block;
+    float: left;
 }
 
 #menuList {
