@@ -152,6 +152,8 @@ var hotMenu = {
       ],
       minRows: 7,
       maxRows: 7,
+      with: 200,
+      height: 200,
       contextMenu: true,
       afterSelectionEnd: hotMenu.Event.afterSelectionEnd
     });
@@ -252,7 +254,7 @@ var hotRecipe = {
     var hot = new Handsontable(container, {
       data: data,
       colHeaders: ["code", "メニュー"],
-      rowHeaders: true,
+      rowHeaders: false,
       columns: [{
           data: 'code',
           width: '100px',

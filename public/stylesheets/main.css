@@ -3,39 +3,42 @@ html, body {
     width: 100%;
 }
 
-#main {
-    height: 80%;
+#body {
+    height: 100%;
     width: 100%;
-    position: relative;
+    position: absolute;
 }
 
-.horizon-container {
+div.horizon-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
+#toplevel-composite {
+  overflow: scroll;
+}
 
-.composite-gallery > .composite-gallery {
-    display: inline-block;
+#toplevel-composite > .composite-gallery {
+  float: left;
+}
+
+div.gallery-table {
+  width: 200px;
+  height: 200px;
 }
 
 #myGrid {
     width: 80%;
-    height: 80%;
+    height: 100%;
     float: left;
+    overflow: hidden;
 }
 
 #menuList {
     width: 20%;
     height: 100%;
-    float: right;
+    float: left;
     background-color: red;
-    display: inline-block;
-    position: absolute;
 }
 
-.currentRow {
-  background-color: #E7E8EF;
-}
-
-.currentCol {
-  background-color: #E7E8EF;
-}
