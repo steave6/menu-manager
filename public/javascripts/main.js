@@ -268,6 +268,8 @@ var hotRecipe = {
         }
       ],
       minRows: 7,
+      height: 500,
+      stretchH: 'last',
       contextMenu: true
     });
     hot.view.wt.update('onCellDblClick', hotRecipe.Event.onCellDblClick);
