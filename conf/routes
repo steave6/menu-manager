@@ -9,7 +9,8 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
-GET     /testdb                     controllers.ScalaControllerInject.index
+#GET     /testdb                     controllers.ScalaControllerInject.index
+GET     /testdb                     controllers.Recipe.index()
 
 GET     /api/get/mealtype                      controllers.SenderData.targetMeal()
 GET     /api/get/menulist                      controllers.SenderData.menuList()

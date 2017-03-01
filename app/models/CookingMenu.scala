@@ -18,7 +18,8 @@ class CookingMenu(mealType: String) {
     Map("code" -> Json.toJson(9), "name" -> Json.toJson("salad")),
     Map("code" -> Json.toJson(10), "name" -> Json.toJson("fish")),
     Map("code" -> Json.toJson(11), "name" -> Json.toJson("meat ball")),
-    Map("code" -> Json.toJson("R11"), "name" -> Json.toJson("meat ball"))
+    Map("code" -> Json.toJson("R11"), "name" -> Json.toJson("meat ball")),
+    Map("code" -> Json.toJson(12), "name" -> Json.toJson("焼き肉"))
   )
 
   def getMealByType(meal: String): Map[String, String] = {
