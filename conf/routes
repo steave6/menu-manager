@@ -10,10 +10,9 @@ GET     /count                      controllers.CountController.count
 GET     /message                    controllers.AsyncController.message
 
 #GET     /testdb                     controllers.ScalaControllerInject.index
-GET     /testdb                     controllers.Recipe.index()
 
-GET     /api/get/mealtype                      controllers.SenderData.targetMeal()
-GET     /api/get/menulist                      controllers.SenderData.menuList()
+GET     /api/get/mealtype            controllers.SenderData.targetMeal()
+GET     /api/get/recipelist           controllers.Recipe.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

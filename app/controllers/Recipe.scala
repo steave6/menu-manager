@@ -7,9 +7,8 @@ import models.Recipe
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
-
-import scala.concurrent.Future
 
 /**
   * Created by ujave on 17/03/01.
@@ -17,11 +16,7 @@ import scala.concurrent.Future
 class Recipe @Inject() (recDao: RecipeDAO) extends Controller {
 
   def index = Action.async {
-    val item: Future[String] = Future(recDao.all().toString)
-    println("test: " + item)
-//    recDao.all().map { result => Ok(Json.toJson(result.toString()))}
-    recDao.all().map { result => Ok(result.toString())}
-//    Ok(Json.toJson(item))
+    recDao.all().map { result => Ok(Json.toJson(result)) }
   }
 
   val catForm = Form(

@@ -216,7 +216,7 @@ var Ajax = {
   },
   getRecipeList: function(callback) {
     $.ajax({
-      url: '/api/get/menulist',
+      url: '/api/get/recipelist',
       success: callback
     });
   }

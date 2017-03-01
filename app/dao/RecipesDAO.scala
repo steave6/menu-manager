@@ -30,6 +30,6 @@ class RecipeDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
     def code = column[String]("code", O.PrimaryKey)
     def name = column[String]("name")
 
-    def * = (code, name) <> (Recipe.tupled, Recipe.unapply _)
+    def * = (code, name) <> ((Recipe.apply _).tupled, Recipe.unapply _)
   }
 }
