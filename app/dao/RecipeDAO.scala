@@ -11,13 +11,13 @@ import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 //import play.api.db.slick.DatabaseConfigProvider
-import slick.driver.H2Driver.api._
+//import slick.driver.H2Driver.api._
+import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class RecipeDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
-//class RecipeDAO  {
-//  val db = Database.forConfig("mydb")
+class RecipeDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+                extends HasDatabaseConfigProvider[JdbcProfile] {
 
   private val Recipes = TableQuery[RecipeTable]
 

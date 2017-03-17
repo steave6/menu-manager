@@ -25,7 +25,6 @@ div.horizon-container {
   width: 78%;
   height: 100%;
   float: left;
-  overflow-x: scroll;
 }
 
 #toplevel-composite {

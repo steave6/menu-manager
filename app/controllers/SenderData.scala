@@ -1,11 +1,14 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
+import java.time.LocalDate
+import javax.inject.Inject
 
-class SenderData extends Controller {
+import dao.MenuDAO
+import play.api.libs.json._
+import play.api.mvc._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+class SenderData @Inject() (menuDao: MenuDAO) extends Controller {
 
   def targetMeal() = Action {
     val cooking = Map("code" -> Json.toJson(1))
@@ -19,6 +22,11 @@ class SenderData extends Controller {
     val json: JsValue = Json.toJson(days)
 
     Ok(json)
+  }
+  def targetMeal2(dstr: String) = Action.async {
+    val t_date = LocalDate.parse(dstr)
+    menuDao.getMenuByDate(t_date).map(res => Ok(Json.toJson(res)))
+//    Ok(json)
   }
 
   def menuList() = Action {
