@@ -6,6 +6,20 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.7"
 
+// you can also add multiple repositories at the same time
+resolvers ++= Seq("snapshots"     at "http://oss.sonatype.org/content/repositories/snapshots",
+  "staging"       at "http://oss.sonatype.org/content/repositories/staging",
+  "releases"      at "http://oss.sonatype.org/content/repositories/releases"
+)
+
+libraryDependencies ++= {
+  val liftVersion = "2.6" // Put the current/latest lift version here
+  Seq(
+    "net.liftweb" %% "lift-webkit" % liftVersion % "compile->default",
+    "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default",
+    "net.liftweb" %% "lift-wizard" % liftVersion % "compile->default")
+}
+
 libraryDependencies ++= Seq(
 //  jdbc,
   cache,

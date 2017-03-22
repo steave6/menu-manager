@@ -65,8 +65,7 @@ class GalleryTable {
     this.element = $('<div class="gallery-table"></div>').attr('id', id)
   }
   add (data) {
-      var id = this.element.attr('id');
-      this.child = new hotMenu.createTable(id, data);
+      this.child = data
   }
   remove () { }
   getChild () { return this.child }
@@ -85,7 +84,8 @@ class GalleryTable {
 var Field = {
   topComp: null,
   hotMap: new Map(),
-  recipeMap: new Map()
+  recipeMap: new Map(),
+  upMenuMap: new Map()
 }
 
 var mainMenu = {
@@ -101,7 +101,8 @@ var mainMenu = {
         for (var i=0; i < 7; i++) {
             var cdate = new Date();
             cdate.setDate(today.getDate() + Number(i));
-            var cdatestr = cdate.getFullYear() + "-" + cdate.getMonth() + "-" + cdate.getDate();
+            var D = cdate.toLocaleDateString("jp-JP").split("/");
+            var cdatestr = D[0] + "-" + D[1] + "-" + D[2];
 
             var secondlevel = new GalleryComposite(cdatestr, cdatestr);
             Field.topComp.add(secondlevel);
@@ -113,7 +114,12 @@ var mainMenu = {
         for (var i = 0; i < comps.length; i++) {
             var comp = comps[i];
 
-            hotMenu.getMenuBridge(comp);
+            for (var j = 0; j < 3; j++) {
+              var idstr = comp.getElement().attr('id') + "-" + (j+1)
+              var gtable = new GalleryTable(idstr);
+              comp.add(gtable);
+              hotMenu.getMenuBridge(idstr, gtable);
+            }
         }
     },
     getMenuList: function() {
@@ -137,40 +143,39 @@ var hotMenu = {
   },
   menu: null,
   createTable: function (id, data) {
+    var m3 = parseInt(id.substring(id.length - 1))
+    var headstr = m3 === 1 ? '朝': (m3 === 2 ? '昼' : '夕')
     var container = document.getElementById(id);
     var ht = new Handsontable(container, {
-      data: data,
+      data: data.menu,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
-      colHeaders: ["code", "メニュー"],
+      colHeaders: [headstr],
       rowHeaders: false,
       columns: [{
           data: 'code',
-          width: '200px',
+          width: '160px',
           renderer: hotMenu.Event.codeMenuRenderer
         }
       ],
       minRows: 7,
-      maxRows: 7,
+      maxRows: 10,
       with: 200,
       height: 200,
       contextMenu: true,
-      afterSelectionEnd: hotMenu.Event.afterSelectionEnd
+      stretchH: 'last',
+      afterSelectionEnd: hotMenu.Event.afterSelectionEnd,
+      afterChange: hotMenu.Event.afterChange
     });
     Field.hotMap.set(id, ht);
     return ht;
   },
-  getMenuBridge: function (composite) {
-      Ajax.getMenuData('someidstring', function (response, dataType) {
-          var item = ["one", "two", "three"]
-          for (var i = 0; i < 3; i++) {
-              var idstr = composite.getElement().attr('id') + "-" + (i+1)
-              var gtable = new GalleryTable(idstr);
-              composite.add(gtable)
+  getMenuBridge: function (id, gtable) {
+    Ajax.getMenuData(id, function (response, dataType) {
+      var jsobj = JSON.parse(response);
 
-              gtable.add(response[item[i]])
-          }
-      });
+      gtable.add(hotMenu.createTable(id, jsobj));
+    });
   },
   Event: {
     afterSelectionEnd: function (r, c, r2, c2) {
@@ -194,6 +199,15 @@ var hotMenu = {
         TD.style.backgroundColor = 'red';
         TD.innerText = value;
       }
+    },
+    afterChange: function (changes, source) {
+      if(source === 'loadData') { return; }
+      var uphot = Field.upMenuMap;
+      console.log(changes);
+      console.log(source);
+      console.log(this.getSourceData());
+      console.log(this.getData());
+      uphot.set(this.rootElement.id, this.getData());
     }
   },
   getInstance: function () {
@@ -210,13 +224,21 @@ var hotMenu = {
 var Ajax = {
   getMenuData: function(id, callback) {
     $.ajax({
-      url:'/api/get/mealtype', // + id,
+      url:'/api/get/daymeal/' + id,
       success: callback
     });
   },
   getRecipeList: function(callback) {
     $.ajax({
       url: '/api/get/recipelist',
+      success: callback
+    });
+  },
+  setMenuData: function(data, callback) {
+    $.ajax({
+      method: 'POST',
+      url: '/api/post/insertmenu',
+      data: data,
       success: callback
     });
   }
@@ -286,11 +308,50 @@ var hotRecipe = {
   }
 }
 
+var gEvent = {
+  main: function() {
+    gEvent.button()
+    gEvent.loop()
+  },
+  button: function() {
+    $('#btn').click(function () {
+      var uphot = Field.upMenuMap,
+          obarr = [],
+          json = "";
+      uphot.forEach(function (value, key, map) {
+        var obj = {};
+        var dm = key.split("-")
+        obj["Date"] = dm[0] + "-" + dm[1] + "-" + dm[2];
+        obj["Three_Meal"] = parseInt(dm[3]);
+        obj["Menu"] = [];
+        for(var i = 0; i < value.length; i++){
+          var ob = {};
+          var v = value[i][0] !== null ? value[i][0] + '' : null;
+          ob["order"] = i;
+          ob["code"] = v;
+          obj["Menu"].push(ob);
+        }
+        obarr.push(obj)
+      });
+      json = JSON.stringify(obarr);
+      Ajax.setMenuData(json, function(response, dataType){
+        console.log(response);
+        console.log(dataType);
+        uphot.clear();
+      })
+    });
+  },
+  loop: function() {
+    setTimeout(hotMenu.allRerender, 1500);
+    setInterval(hotMenu.allRerender, 10000);
+  }
+}
+
 $( document ).ready(function () {
   mainMenu.init();
   hotRecipe.init();
 
-  setTimeout(hotMenu.allRerender, 1500);
+  gEvent.main();
 });
 
 })();
